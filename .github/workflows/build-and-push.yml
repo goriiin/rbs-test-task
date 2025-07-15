@@ -16,15 +16,15 @@ jobs:
 
       - name: Create dummy .env file
         run: |
-          echo "MAIN_DB_USER=ci_user" > .env
-          echo "MAIN_DB_PASSWORD=ci_pass" >> .env
-          echo "MAIN_DB_NAME=ci_db" >> .env
-          echo "ANALYTICS_DB_USER=ci_user" >> .env
-          echo "ANALYTICS_DB_PASSWORD=ci_pass" >> .env
-          echo "ANALYTICS_DB_NAME=ci_db" >> .env
+          echo "MAIN_DB_USER=ci_user" > docker/.env
+          echo "MAIN_DB_PASSWORD=ci_pass" >> docker/.env
+          echo "MAIN_DB_NAME=ci_db" >> docker/.env
+          echo "ANALYTICS_DB_USER=ci_user" >> docker/.env
+          echo "ANALYTICS_DB_PASSWORD=ci_pass" >> docker/.env
+          echo "ANALYTICS_DB_NAME=ci_db" >> docker/.env
 
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build container images using Docker Compose
-        run: docker compose build
+        run: docker compose -f docker/docker-compose.yml build
