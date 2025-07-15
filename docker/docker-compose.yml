@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  back_go:
+    container_name: back_go
+    image: image_back_go
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      db_pg:
+        condition: service_healthy
+    env_file: .env
+    volumes:
+      - ../config.yaml:/config.yaml:ro
+    networks:
+      - rbs
+    environment:
+      APP_SERVICE_NAME: "back_go"
+    ports:
+      - "8050:8050"
+
+  db_pg:
+    image: postgres:16-alpine
+    container_name: db_pg
+    environment:
+      POSTGRES_USER: ${MAIN_DB_USER}
+      POSTGRES_PASSWORD: ${MAIN_DB_PASSWORD}
+      POSTGRES_DB: ${MAIN_DB_NAME}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${MAIN_DB_USER} -d ${MAIN_DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ../assets/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - rbs
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: nginx_proxy
+    ports:
+      - "8088:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - back_go
+    networks:
+      - rbs
+
+networks:
+  rbs:
+    driver: bridge
+
+volumes:
+  pg_data:

@@ -1,0 +1,13 @@
+
+databases:
+  - name: "main_db"
+    host: "db_pg"
+    port: 5432
+    env_vars:
+      user: "MAIN_DB_USER"
+      password: "MAIN_DB_PASSWORD"
+      db_name: "MAIN_DB_NAME"
+
+services:
+  back_go:
+    - "main_db"
