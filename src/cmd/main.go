@@ -21,7 +21,7 @@ const (
 	healthyTemplatePath = "/templates/healthy.html"
 	addPath             = "/templates/add.html"
 	needDB              = "main_db"
-	serverAddress       = ":8050"
+	serverAddress       = ":8080"
 	shutdownTimeout     = 30 * time.Second
 )
 
